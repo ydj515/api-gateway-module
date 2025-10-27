@@ -9,10 +9,10 @@ import (
 
 type put struct {
 	cfg    config.Router
-	client client.HttpClient
+	client *client.HttpClient
 }
 
-func AddPut(cfg config.Router, client client.HttpClient) func(c *fiber.Ctx) error {
+func AddPut(cfg config.Router, client *client.HttpClient) func(c *fiber.Ctx) error {
 	r := put{cfg: cfg, client: client}
 	return r.handleRequest
 }

@@ -13,10 +13,10 @@ import (
 
 type get struct {
 	cfg    config.Router
-	client client.HttpClient
+	client *client.HttpClient
 }
 
-func AddGet(cfg config.Router, client client.HttpClient) func(c *fiber.Ctx) error {
+func AddGet(cfg config.Router, client *client.HttpClient) func(c *fiber.Ctx) error {
 	r := get{cfg: cfg, client: client}
 	return r.handleRequest
 }

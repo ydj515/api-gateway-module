@@ -9,10 +9,10 @@ import (
 
 type post struct {
 	cfg    config.Router
-	client client.HttpClient
+	client *client.HttpClient
 }
 
-func AddPost(cfg config.Router, client client.HttpClient) func(c *fiber.Ctx) error {
+func AddPost(cfg config.Router, client *client.HttpClient) func(c *fiber.Ctx) error {
 	r := post{cfg: cfg, client: client}
 	return r.handleRequest
 }

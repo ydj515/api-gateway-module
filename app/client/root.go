@@ -5,6 +5,7 @@ import (
 	"api-gateway-module/config"
 	"api-gateway-module/kafka"
 	"fmt"
+	"sync"
 
 	"github.com/go-resty/resty/v2" // rest builder
 )
@@ -14,15 +15,23 @@ const (
 )
 
 type HttpClient struct {
-	client   *resty.Client
-	cfg      config.App
+	client *resty.Client
+	cfg    config.App
+
 	producer kafka.Producer
+
+	batchTime float64
+
+	// TODO: 아래 데이터는 client에서 구성하면안됨. 추후 redis로 관리해야함.
+	fetchLock    sync.Mutex
+	mapper       []ApiRequestTopic
+	fetchChannel chan ApiRequestTopic
 }
 
 func NewHttpClient(
 	cfg config.App,
 	producer map[string]kafka.Producer,
-) HttpClient {
+) *HttpClient {
 	batchTime := cfg.Producer.BatchTime
 
 	if batchTime == 0 {
@@ -33,18 +42,29 @@ func NewHttpClient(
 		panic("BaseUrl not existed")
 	}
 
-	client := resty.New().
+	httpClient := HttpClient{
+		cfg:          cfg,
+		producer:     producer[cfg.App.Name],
+		batchTime:    batchTime,
+		mapper:       make([]ApiRequestTopic, 0),
+		fetchChannel: make(chan ApiRequestTopic),
+	}
+
+	httpClient.client = resty.New().
 		SetJSONMarshaler(common.JsonHandler.Marshal).     // sonic Marshal
 		SetJSONUnmarshaler(common.JsonHandler.Unmarshal). // sonic Unmarshal
 		SetBaseURL(cfg.Http.BaseUrl)
-	return HttpClient{
-		cfg:      cfg,
-		client:   client,
-		producer: producer[cfg.App.Name],
+
+	if len(cfg.Producer.URL) > 0 {
+		go func() {
+			httpClient.loop()
+		}()
 	}
+
+	return &httpClient
 }
 
-func (h HttpClient) GET(url string, router config.Router) (interface{}, error) {
+func (h *HttpClient) GET(url string, router config.Router) (interface{}, error) {
 	var err error
 	var req *resty.Request
 	var resp *resty.Response
@@ -57,10 +77,14 @@ func (h HttpClient) GET(url string, router config.Router) (interface{}, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	// defer 키워드를 사용하여 함수가 종료되기 직전에 실행시킴
+	defer h.handleRequestDefer(resp, req.Body)
+
 	return string(resp.Body()), nil
 }
 
-func (h HttpClient) POST(url string, router config.Router, requestBody interface{}) (interface{}, error) {
+func (h *HttpClient) POST(url string, router config.Router, requestBody interface{}) (interface{}, error) {
 	var err error
 	var req *resty.Request
 	var resp *resty.Response
@@ -73,15 +97,17 @@ func (h HttpClient) POST(url string, router config.Router, requestBody interface
 	if err != nil {
 		return nil, err
 	}
+
+	// defer 키워드를 사용하여 함수가 종료되기 직전에 실행시킴
+	defer h.handleRequestDefer(resp, req.Body)
+
 	return string(resp.Body()), nil
 }
 
-func (h HttpClient) PUT(url string, router config.Router, requestBody interface{}) (interface{}, error) {
+func (h *HttpClient) PUT(url string, router config.Router, requestBody interface{}) (interface{}, error) {
 	var err error
 	var req *resty.Request
 	var resp *resty.Response
-
-	// defer // 함수가 종료할 때 실행
 
 	req = getRequest(h.client, router).SetBody(requestBody)
 	resp, err = req.Put(url)
@@ -91,15 +117,17 @@ func (h HttpClient) PUT(url string, router config.Router, requestBody interface{
 	if err != nil {
 		return nil, err
 	}
+
+	// defer 키워드를 사용하여 함수가 종료되기 직전에 실행시킴
+	defer h.handleRequestDefer(resp, req.Body)
+
 	return string(resp.Body()), nil
 }
 
-func (h HttpClient) DELETE(url string, router config.Router, requestBody interface{}) (interface{}, error) {
+func (h *HttpClient) DELETE(url string, router config.Router, requestBody interface{}) (interface{}, error) {
 	var err error
 	var req *resty.Request
 	var resp *resty.Response
-
-	// defer // 함수가 종료할 때 실행
 
 	req = getRequest(h.client, router).SetBody(requestBody)
 	resp, err = req.Delete(url)
@@ -109,6 +137,10 @@ func (h HttpClient) DELETE(url string, router config.Router, requestBody interfa
 	if err != nil {
 		return nil, err
 	}
+
+	// defer 키워드를 사용하여 함수가 종료되기 직전에 실행시킴
+	defer h.handleRequestDefer(resp, req.Body)
+
 	return string(resp.Body()), nil
 }
 
