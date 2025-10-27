@@ -18,7 +18,7 @@ func AddPost(cfg config.Router, client client.HttpClient) func(c *fiber.Ctx) err
 }
 
 func (r post) handleRequest(c *fiber.Ctx) error {
-	apiResult, err := r.client.POST(r.cfg.Path, r.cfg, c.Request().Body())
+	apiResult, err := r.client.POST(r.cfg.Path, r.cfg, string(c.Request().Body()))
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(err)

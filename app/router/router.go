@@ -5,8 +5,10 @@ import (
 	"api-gateway-module/config"
 	"api-gateway-module/types/http"
 	"fmt"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	recover2 "github.com/gofiber/fiber/v2/middleware/recover"
 )
 
@@ -28,11 +30,12 @@ func NewRouter(cfg config.App, clients map[string]client.HttpClient) Router {
 
 	r.engine = fiber.New()
 	r.engine.Use(recover2.New())
-	//r.engine.Use(cors.New(cors.Config{
-	//	//AllowOrigins:
-	//	//AllowMethods:
-	//	//MaxAge: 86400,
-	//}))
+	r.engine.Use(cors.New(cors.Config{
+		AllowMethods: strings.Join([]string{"GET", "POST", "PUT", "DELETE"}, ","),
+		//AllowOrigins:
+		//AllowMethods:
+		//MaxAge: 86400,
+	}))
 
 	for _, v := range cfg.Http.Router {
 		r.registerRouter(v)
