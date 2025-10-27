@@ -17,6 +17,10 @@ type Producer struct {
 }
 
 func NewProducer(cfg config.Producer) Producer {
+	if cfg.URL == "" {
+		return Producer{}
+	}
+
 	url := cfg.URL
 	id := cfg.ClientID
 	acks := cfg.Acks
@@ -43,6 +47,10 @@ func NewProducer(cfg config.Producer) Producer {
 // SendEvent 외부에서 global하게 사용하기 위해 byte로 받음.
 // 직렬화 / 역직렬화를 처리
 func (p Producer) SendEvent(v []byte) {
+	if p.Producer == nil {
+		return
+	}
+
 	topic := p.cfg.Topic
 
 	err := p.Producer.Produce(
