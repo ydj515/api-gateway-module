@@ -1,6 +1,6 @@
 apps:
   - app:
-      name: gateway_module
+      name: "gateway_module"
       port: "8080"
       version: "1.0.0"
     http:
