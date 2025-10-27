@@ -4,7 +4,6 @@ import (
 	"api-gateway-module/common"
 	"api-gateway-module/config"
 	"api-gateway-module/kafka"
-	"fmt"
 	"sync"
 
 	"github.com/go-resty/resty/v2" // rest builder
@@ -51,7 +50,7 @@ func NewHttpClient(
 	}
 
 	httpClient.client = resty.New().
-		SetJSONMarshaler(common.JsonHandler.Marshal).     // sonic Marshal
+		SetJSONMarshaler(common.JsonHandler.Marshal). // sonic Marshal
 		SetJSONUnmarshaler(common.JsonHandler.Unmarshal). // sonic Unmarshal
 		SetBaseURL(cfg.Http.BaseUrl)
 
@@ -69,17 +68,22 @@ func (h *HttpClient) GET(url string, router config.Router) (interface{}, error) 
 	var req *resty.Request
 	var resp *resty.Response
 
-	req = getRequest(h.client, router)
-	resp, err = req.Get(url)
+	common.CB.Execute(func() ([]byte, error) {
+		req = getRequest(h.client, router)
+		resp, err = req.Get(url)
+		if err != nil {
+			return nil, err
+		}
 
-	fmt.Println(resp)
+		return nil, nil
+	})
+
+	// defer 키워드를 사용하여 함수가 종료되기 직전에 실행시킴
+	defer h.handleRequestDefer(resp, req.Body)
 
 	if err != nil {
 		return nil, err
 	}
-
-	// defer 키워드를 사용하여 함수가 종료되기 직전에 실행시킴
-	defer h.handleRequestDefer(resp, req.Body)
 
 	return string(resp.Body()), nil
 }
@@ -89,17 +93,22 @@ func (h *HttpClient) POST(url string, router config.Router, requestBody interfac
 	var req *resty.Request
 	var resp *resty.Response
 
-	req = getRequest(h.client, router).SetBody(requestBody)
-	resp, err = req.Post(url)
+	common.CB.Execute(func() ([]byte, error) {
+		req = getRequest(h.client, router)
+		resp, err = req.Post(url)
+		if err != nil {
+			return nil, err
+		}
 
-	fmt.Println(resp)
+		return nil, nil
+	})
+
+	// defer 키워드를 사용하여 함수가 종료되기 직전에 실행시킴
+	defer h.handleRequestDefer(resp, req.Body)
 
 	if err != nil {
 		return nil, err
 	}
-
-	// defer 키워드를 사용하여 함수가 종료되기 직전에 실행시킴
-	defer h.handleRequestDefer(resp, req.Body)
 
 	return string(resp.Body()), nil
 }
@@ -109,10 +118,18 @@ func (h *HttpClient) PUT(url string, router config.Router, requestBody interface
 	var req *resty.Request
 	var resp *resty.Response
 
-	req = getRequest(h.client, router).SetBody(requestBody)
-	resp, err = req.Put(url)
+	common.CB.Execute(func() ([]byte, error) {
+		req = getRequest(h.client, router)
+		resp, err = req.Put(url)
+		if err != nil {
+			return nil, err
+		}
 
-	fmt.Println(resp)
+		return nil, nil
+	})
+
+	// defer 키워드를 사용하여 함수가 종료되기 직전에 실행시킴
+	defer h.handleRequestDefer(resp, req.Body)
 
 	if err != nil {
 		return nil, err
@@ -129,10 +146,18 @@ func (h *HttpClient) DELETE(url string, router config.Router, requestBody interf
 	var req *resty.Request
 	var resp *resty.Response
 
-	req = getRequest(h.client, router).SetBody(requestBody)
-	resp, err = req.Delete(url)
+	common.CB.Execute(func() ([]byte, error) {
+		req = getRequest(h.client, router)
+		resp, err = req.Delete(url)
+		if err != nil {
+			return nil, err
+		}
 
-	fmt.Println(resp)
+		return nil, nil
+	})
+
+	// defer 키워드를 사용하여 함수가 종료되기 직전에 실행시킴
+	defer h.handleRequestDefer(resp, req.Body)
 
 	if err != nil {
 		return nil, err
