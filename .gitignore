@@ -34,3 +34,6 @@ Thumbs.db
 # Environment variables (if used)
 .env
 deploy.yaml
+
+# example-backend-service. express
+node_modules

@@ -11,6 +11,7 @@
 - Confluent Kafka 프로듀서를 설정에 맞춰 자동 생성해 다운스트림 호출 로그나 팬아웃 처리 가능.
 - Uber Fx 라이프사이클 관리로 모든 라우터와 의존성을 안전하게 부트스트랩.
 - Bytedance Sonic 기반 JSON 핸들러로 빠른 직렬화와 공통 에러 로깅 제공.
+- Node 기반 예제 서비스와 `scripts/curl-gateway.sh` 스크립트를 통해 전체 라우팅 흐름을 손쉽게 검증.
 
 ## 프로젝트 구조
 ```
@@ -24,6 +25,8 @@
 ├── config/           # YAML 스키마 정의 (App/HTTP/Kafka)
 ├── kafka/            # confluent-kafka-go 기반 프로듀서
 ├── types/http/       # HTTP 메서드 및 GET 타입 enum
+├── example-service/  # 로컬 검증용 Node 기반 다운스트림 샘플 서비스
+├── scripts/          # 게이트웨이 호출을 돕는 보조 스크립트
 ├── deploy.yaml       # 실제 실행 시 사용하는 설정 파일
 ├── deploy-sample.yaml# 샘플 설정 (필수 참고)
 ├── go.mod / go.sum
@@ -48,11 +51,24 @@ apps:
           variable: ["name", "age"]
           header:
             X-Request-Source: gateway
+        - method: "GET"
+          get_type: "url"
+          path: "/api/user/:id"
         - method: "POST"
-          path: "/api/users"
+          path: "/api/create"
+          header:
+            Content-Type: application/json
           auth:
             key: "Bearer"
             token: "<token>"
+        - method: "PUT"
+          path: "/api/update/:id"
+          header:
+            Content-Type: application/json
+        - method: "DELETE"
+          path: "/api/delete/:id"
+          header:
+            Content-Type: application/json
     kafka:
       url: "localhost:9092"
       client_id: "gateway-producer"
@@ -69,17 +85,32 @@ apps:
 ## 실행 방법
 1. Go 1.24 이상을 설치하고 최초 한 번 `go mod download`.
 2. `deploy-sample.yaml`을 복사해 `deploy.yaml`을 만들고 환경에 맞게 수정.
-3. 게이트웨이 실행:
+3. (선택) 로컬 검증을 위해 `example-service` 디렉터리에서 예제 서비스를 실행:
+   ```bash
+   cd example-backend-service
+   npm install
+   npm start
+   ```
+   기본 포트는 `3000`이며, 필요 시 `PORT` 환경 변수를 지정하세요.
+4. 게이트웨이 실행:
    ```bash
    go run . -yamlPath=./deploy.yaml
    ```
-4. 설정된 각 `app.port`마다 Fiber 인스턴스가 하나씩 구동되고, YAML에 정의한 경로가 그대로 마운트됩니다.
+5. 설정된 각 `app.port`마다 Fiber 인스턴스가 하나씩 구동되고, YAML에 정의한 경로가 그대로 마운트됩니다.
 
 바이너리 빌드:
 ```bash
 go build -o bin/api-gateway
 ./bin/api-gateway -yamlPath=/path/to/deploy.yaml
 ```
+
+## 로컬 검증 예시
+- 샘플 서비스와 게이트웨이가 구동 중일 때 `scripts/curl-gateway.sh`를 실행하면 GET/POST/PUT/DELETE 요청 흐름을 한 번에 확인할 수 있습니다.
+  ```bash
+  ./scripts/curl-gateway.sh             # 기본 게이트웨이 주소 http://localhost:8080
+  ./scripts/curl-gateway.sh http://localhost:9090  # 포트가 다를 때
+  ```
+- 스크립트는 각 요청에 대한 응답 바디와 HTTP 코드를 함께 출력하므로 라우팅/헤더 전달 여부를 빠르게 확인할 수 있습니다.
 
 ## 확장 가이드
 - **새 다운스트림 서비스**: `apps` 배열에 항목을 추가하면 Fx가 자동으로 새 클라이언트/라우터/프로듀서를 생성합니다.
