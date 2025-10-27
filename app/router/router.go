@@ -4,6 +4,7 @@ import (
 	"api-gateway-module/app/client"
 	"api-gateway-module/config"
 	"api-gateway-module/types/http"
+	"context"
 	"fmt"
 	"strings"
 
@@ -21,8 +22,8 @@ type Router struct {
 	client *client.HttpClient
 }
 
-func NewRouter(cfg config.App, clients map[string]*client.HttpClient) Router {
-	r := Router{
+func NewRouter(cfg config.App, clients map[string]*client.HttpClient) *Router {
+	r := &Router{
 		cfg:    cfg,
 		port:   fmt.Sprintf(":%s", cfg.App.Port),
 		client: clients[cfg.App.Name],
@@ -44,7 +45,7 @@ func NewRouter(cfg config.App, clients map[string]*client.HttpClient) Router {
 	return r
 }
 
-func (r Router) registerRouter(v config.Router) {
+func (r *Router) registerRouter(v config.Router) {
 	switch v.Method {
 	case http.GET:
 		handler := AddGet(v, r.client)
@@ -63,6 +64,10 @@ func (r Router) registerRouter(v config.Router) {
 	}
 }
 
-func (r Router) Run() error {
+func (r *Router) Run() error {
 	return r.engine.Listen(r.port)
+}
+
+func (r *Router) Shutdown(ctx context.Context) error {
+	return r.engine.ShutdownWithContext(ctx)
 }

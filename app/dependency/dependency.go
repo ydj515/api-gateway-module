@@ -52,8 +52,8 @@ var HttpClient = fx.Module(
 
 var Router = fx.Module(
 	"router",
-	fx.Provide(func(cfg config.Config, client map[string]*client.HttpClient) map[string]router.Router {
-		clients := make(map[string]router.Router, len(cfg.App))
+	fx.Provide(func(cfg config.Config, client map[string]*client.HttpClient) map[string]*router.Router {
+		clients := make(map[string]*router.Router, len(cfg.App))
 
 		for _, a := range cfg.App {
 			clients[a.App.Name] = router.NewRouter(a, client)

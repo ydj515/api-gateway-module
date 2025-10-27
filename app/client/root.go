@@ -50,7 +50,7 @@ func NewHttpClient(
 	}
 
 	httpClient.client = resty.New().
-		SetJSONMarshaler(common.JsonHandler.Marshal). // sonic Marshal
+		SetJSONMarshaler(common.JsonHandler.Marshal).     // sonic Marshal
 		SetJSONUnmarshaler(common.JsonHandler.Unmarshal). // sonic Unmarshal
 		SetBaseURL(cfg.Http.BaseUrl)
 
