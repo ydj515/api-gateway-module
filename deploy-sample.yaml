@@ -1,0 +1,25 @@
+apps:
+  - app:
+      name: gateway_module
+      port: "8080"
+      version: "1.0.0"
+    http:
+      base_url: "http://localhost:3000"
+      router:
+        - method: "GET"
+          get_type: "query"   # or "url"
+          path: "/api/query"
+          variable: ["name", "age"]
+          header:
+            X-Request-Source: gateway
+        - method: "POST"
+          path: "/api/users"
+          auth:
+            key: "Bearer"
+            token: "<token>"
+    kafka:
+      url: "localhost:9092"
+      client_id: "gateway-producer"
+      topic: "gateway-log"
+      acks: "all"
+      batch_time: 2
