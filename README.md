@@ -3,7 +3,7 @@
 단일 YAML 정의만으로 HTTP 라우터와 Kafka 프로듀서를 동시에 구성하는 Go/Fiber 기반 API 게이트웨이입니다. 각 `app` 엔트리는 Uber Fx를 통해 라우터, Resty 클라이언트, Kafka 프로듀서를 묶어 다중 게이트웨이를 한 프로세스에서 구동할 수 있게 합니다.
 
 ## 사전 요구사항
-- Go 1.24 (go.mod에 명시된 최소 버전) 이상이 설치되어 있어야 합니다.
+- Go 1.27 (go.mod에 명시된 최소 버전) 이상이 설치되어 있어야 합니다.
 
 ## 주요 기능
 - GET/POST/PUT/DELETE 라우트를 YAML 설정에 따라 동적으로 생성하고, GET은 `query`/`url` 두 타입을 지원.
@@ -83,7 +83,7 @@ apps:
 - `kafka`: 각 앱 전용 Kafka 프로듀서 설정. 필요 시 `app/client`에서 `producer.SendEvent` 호출 로직을 확장하세요.
 
 ## 실행 방법
-1. Go 1.24 이상을 설치하고 최초 한 번 `go mod download`.
+1. Go 1.27 이상을 설치하고 최초 한 번 `go mod download`.
 2. `deploy-sample.yaml`을 복사해 `deploy.yaml`을 만들고 환경에 맞게 수정.
 3. (선택) 로컬 검증을 위해 `example-service` 디렉터리에서 예제 서비스를 실행:
    ```bash

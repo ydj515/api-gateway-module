@@ -3,6 +3,8 @@
 *.dll
 *.so
 *.dylib
+/api-gateway-module
+bin/
 # Build artifacts
 *.o
 *.a
