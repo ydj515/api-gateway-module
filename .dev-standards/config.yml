@@ -1,0 +1,8 @@
+version: 1
+base: true
+languages: [go]
+architectures: []
+frameworks: []
+builds: []
+tools: []
+runtimes: [mise]
