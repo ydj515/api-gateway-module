@@ -8,7 +8,7 @@
   },
   "config": {
     "path": ".dev-standards/config.yml",
-    "sha256": "03a5fa976c09d4668f8aec2621b47b87d07fbadeb6b6f19395c407ed67f563ef"
+    "sha256": "d4e19eccdfa2a92c500ff2a589da4d49ec05584d2b9e007c4deaa6a3d680b43a"
   },
   "files": {
     ".dev-standards/claude/skills/merge-dev-standards/SKILL.md": {
@@ -110,6 +110,10 @@
       "ownership": "managed",
       "sha256": "fd66a8ed4ffa1f28ef5537e90cb6c0fdc033e9890bc71935a2a27417eec164f9"
     },
+    ".dev-standards/standards/tools/languages/go/golangci-lint.md": {
+      "ownership": "managed",
+      "sha256": "748fbdd1ae8065b8a95993d87807820c5e51d60860c533fe3e47f232f1210d44"
+    },
     ".dev-standards/standards/workflows/branch.md": {
       "ownership": "managed",
       "sha256": "453a4e9afb7e0672ff53d585b65365429b818ba51f10d09b55887ab387da6a2d"
@@ -128,11 +132,11 @@
     },
     ".dev-standards/styleguide.md": {
       "ownership": "managed",
-      "sha256": "2d677fc5404705123f0e36a90b3e70423af6e12163b838222472d9b58b7d496a"
+      "sha256": "b1a349fa1c5dc26950d96a9382d4c98b19507fdc85fc3dfe699fa46a912303e2"
     },
     ".gemini/styleguide.md": {
       "ownership": "managed",
-      "sha256": "2d677fc5404705123f0e36a90b3e70423af6e12163b838222472d9b58b7d496a"
+      "sha256": "b1a349fa1c5dc26950d96a9382d4c98b19507fdc85fc3dfe699fa46a912303e2"
     },
     ".worktreeinclude": {
       "ownership": "project-owned"
