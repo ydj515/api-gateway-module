@@ -1,8 +1,7 @@
 min_version = "2026.9.18"
 
 [settings]
-lockfile = true
-lockfile_platforms = ["macos-arm64", "linux-x64"]
+lockfile = false
 
 [vars]
 runtime_env = "local"
@@ -15,8 +14,8 @@ APP_ENV = "{{ vars.runtime_env }}"
 go = "1.27.0"
 
 [tasks."bootstrap"]
-description = "Install locked tools and project dependencies; do not start services"
-run = "mise install --locked go@1.27.0\ngo mod download"
+description = "Install pinned tools and project dependencies; do not start services"
+run = "mise install go@1.27.0\ngo mod download"
 
 [tasks."config:check"]
 description = "Validate task references without starting applications"
