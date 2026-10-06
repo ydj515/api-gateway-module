@@ -4,7 +4,7 @@ import (
 	"api-gateway-module/app/client"
 	"api-gateway-module/config"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v3"
 )
 
 type delete struct {
@@ -12,12 +12,12 @@ type delete struct {
 	client *client.HttpClient
 }
 
-func AddDelete(cfg config.Router, client *client.HttpClient) func(c *fiber.Ctx) error {
+func AddDelete(cfg config.Router, client *client.HttpClient) func(c fiber.Ctx) error {
 	r := delete{cfg: cfg, client: client}
 	return r.handleRequest
 }
 
-func (r delete) handleRequest(c *fiber.Ctx) error {
+func (r delete) handleRequest(c fiber.Ctx) error {
 	apiResult, err := r.client.DELETE(r.cfg.Path, r.cfg, c.Request().Body())
 
 	if err != nil {

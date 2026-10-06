@@ -3,7 +3,7 @@ package config
 import (
 	"os"
 
-	"gopkg.in/yaml.v2"
+	"go.yaml.in/yaml/v3"
 )
 
 type Config struct {

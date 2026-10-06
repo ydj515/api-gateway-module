@@ -7,8 +7,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/utils"
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/utils/v2"
 )
 
 type get struct {
@@ -16,12 +16,12 @@ type get struct {
 	client *client.HttpClient
 }
 
-func AddGet(cfg config.Router, client *client.HttpClient) func(c *fiber.Ctx) error {
+func AddGet(cfg config.Router, client *client.HttpClient) func(c fiber.Ctx) error {
 	r := get{cfg: cfg, client: client}
 	return r.handleRequest
 }
 
-func (r get) handleRequest(c *fiber.Ctx) error {
+func (r get) handleRequest(c fiber.Ctx) error {
 
 	// query(query param)
 	// url(path variable)
@@ -35,7 +35,7 @@ func (r get) handleRequest(c *fiber.Ctx) error {
 	}
 }
 
-func (r get) queryType(c *fiber.Ctx) error {
+func (r get) queryType(c fiber.Ctx) error {
 	var builder strings.Builder
 	builder.WriteString(r.cfg.Path)
 
@@ -62,7 +62,7 @@ func (r get) queryType(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(apiResult)
 }
 
-func (r get) urlType(c *fiber.Ctx) error {
+func (r get) urlType(c fiber.Ctx) error {
 	var builder strings.Builder
 	builder.WriteString(string(c.Request().URI().Path()))
 

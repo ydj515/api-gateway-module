@@ -39,3 +39,14 @@ deploy.yaml
 
 # example-backend-service. express
 node_modules
+
+# Personal mise environments and credentials
+mise.local.toml
+mise.*.local.toml
+mise.local.lock
+mise.*.local.lock
+.miserc.local.toml
+.env.*
+!.env.example
+!.env.*.example
+deploy.prod.yaml

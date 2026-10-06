@@ -6,11 +6,10 @@ import (
 	"api-gateway-module/types/http"
 	"context"
 	"fmt"
-	"strings"
 
-	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/cors"
-	recover2 "github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v3/middleware/cors"
+	recover2 "github.com/gofiber/fiber/v3/middleware/recover"
 )
 
 type Router struct {
@@ -32,7 +31,7 @@ func NewRouter(cfg config.App, clients map[string]*client.HttpClient) *Router {
 	r.engine = fiber.New()
 	r.engine.Use(recover2.New())
 	r.engine.Use(cors.New(cors.Config{
-		AllowMethods: strings.Join([]string{"GET", "POST", "PUT", "DELETE"}, ","),
+		AllowMethods: []string{"GET", "POST", "PUT", "DELETE"},
 		//AllowOrigins:
 		//AllowMethods:
 		//MaxAge: 86400,

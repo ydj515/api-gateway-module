@@ -1,2 +1,53 @@
+min_version = "2026.9.18"
+
+[settings]
+lockfile = true
+lockfile_platforms = ["macos-arm64", "linux-x64"]
+
+[vars]
+runtime_env = "local"
+gateway_config = "deploy.yaml"
+
+[env]
+APP_ENV = "{{ vars.runtime_env }}"
+
 [tools]
 go = "1.27.0"
+
+[tasks."bootstrap"]
+description = "Install locked tools and project dependencies; do not start services"
+run = "mise install --locked go@1.27.0\ngo mod download"
+
+[tasks."config:check"]
+description = "Validate task references without starting applications"
+run = "mise tasks validate --errors-only"
+
+[tasks."dev"]
+description = "Run the gateway using the selected config"
+depends = ["guard:local"]
+run = "go run . -yamlPath={{ vars.gateway_config | quote }}"
+
+[tasks."test"]
+description = "Run Go tests"
+run = "go test ./..."
+
+[tasks."lint"]
+description = "Run Go vet"
+run = "go vet ./..."
+
+[tasks."build"]
+description = "Compile packages"
+run = "go build ./..."
+
+[tasks."verify"]
+description = "Run tests, vet and build"
+run = "mise run lint\nmise run test\nmise run build"
+
+[tasks."ci"]
+description = "Run verification"
+run = "mise run verify"
+
+[tasks."guard:local"]
+description = "Reject local services under a production environment"
+hide = true
+run = "case \"$APP_ENV\" in local|dev|development) ;; *) echo 'Local services require the default or dev environment' >&2; exit 1 ;; esac"
