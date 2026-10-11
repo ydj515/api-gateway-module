@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "source": {
     "repository": "ydj515/dev-standards",
-    "requestedRef": "v1.3.0",
-    "resolvedRef": "v1.3.0",
-    "commit": "549f49628fbd83e0d32ca4124025db74daa4e219"
+    "requestedRef": "v1.5.0",
+    "resolvedRef": "v1.5.0",
+    "commit": "52aa44ec3374d0d8d570fec9c26399f39406d5db"
   },
   "config": {
     "path": ".dev-standards/config.yml",
@@ -108,7 +108,7 @@
     },
     ".dev-standards/standards/runtime/mise.md": {
       "ownership": "managed",
-      "sha256": "fd66a8ed4ffa1f28ef5537e90cb6c0fdc033e9890bc71935a2a27417eec164f9"
+      "sha256": "8de0bab13e5c043362e1b2f3053d0a6a049802b94108421121fc956fa8742701"
     },
     ".dev-standards/standards/tools/languages/go/golangci-lint.md": {
       "ownership": "managed",
@@ -132,11 +132,7 @@
     },
     ".dev-standards/styleguide.md": {
       "ownership": "managed",
-      "sha256": "b1a349fa1c5dc26950d96a9382d4c98b19507fdc85fc3dfe699fa46a912303e2"
-    },
-    ".gemini/styleguide.md": {
-      "ownership": "managed",
-      "sha256": "b1a349fa1c5dc26950d96a9382d4c98b19507fdc85fc3dfe699fa46a912303e2"
+      "sha256": "3ca12ac4052196b86ca7a182a68664e07cfcfd876758f9df64a8640eda64b406"
     },
     ".worktreeinclude": {
       "ownership": "project-owned"
